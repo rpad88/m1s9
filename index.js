@@ -10,10 +10,11 @@ app.use(express.json()) //Obrigatório
 const listaDeRotas = [
     '/',
     '/tarefas',
+    '/users'
 ]
 
 connection.authenticate()
-connection.sync()
+connection.sync({alter: true})
 console.log('Connection has been stablished sucessfully')
 
 
