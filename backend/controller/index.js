@@ -90,12 +90,12 @@ module.exports = {
         cpf: req.body.cpf,
         password: await bcrypt.hash(req.body.password, 10),
       };
-      
+
       const cpfInDatabase = await User.findOne({ where: { cpf: newUser.cpf } });
       if (!cpfInDatabase) {
         // ADICIONANDO AO BANCO DE DADOS
         const user = await User.create(newUser);
-        user.password = '******' //Ocultando a senha e a hash.
+        user.password = "******"; //Ocultando a senha e a hash.
         res.status(201).json(user);
       } else {
         res.status(400).json({ error: `this CPF already exists` });
@@ -105,6 +105,32 @@ module.exports = {
       res
         .status(500)
         .json({ message: "Não conseguimos processar a sua requisição." });
+    }
+  },
+  login: async (req, res) => {
+    try {
+        const userInDatabase = await User.findOne({
+            where: { cpf: req.body.cpf },
+        });
+
+        if (!userInDatabase)
+            return res.status(404).json({ message: "credenciais incorretas" });
+
+        // compara senha informada com a senha criptografada no banco de dados
+        const passwordIsValid = await bcrypt.compare(
+            req.body.password,
+            userInDatabase.password
+        ); //return true or false
+
+        if (!passwordIsValid)
+            return res.status(404).json({ message: "credenciais incorretas" });
+
+        res.status(200).json({ message: "Login realizado com sucesso" });
+    } catch (error) {
+        console.error(error.message);
+        res
+            .status(500)
+            .json({ message: "Não conseguimos processar a sua requisição." });
     }
   },
 };

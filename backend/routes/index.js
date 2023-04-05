@@ -15,5 +15,6 @@ router.delete('/tarefas/:id', controller.deletaTarefa)
 
 // PUT - atualização
 router.put('/tarefas/:id', controller.atualizaTarefa)
+router.post('/users/login', controller.login)
 
 module.exports = router

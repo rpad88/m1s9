@@ -10,7 +10,8 @@ app.use(express.json()) //Obrigatório
 const listaDeRotas = [
     '/',
     '/tarefas',
-    '/users'
+    '/users',
+    '/users/login'
 ]
 
 connection.authenticate()
