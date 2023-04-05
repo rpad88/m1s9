@@ -1,6 +1,7 @@
 const Task = require("../../src/models/Task");
 const User = require("../../src/models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   index: (req, res) => {
@@ -88,15 +89,16 @@ module.exports = {
       const newUser = {
         name: req.body.name,
         cpf: req.body.cpf,
-        password: await bcrypt.hash(req.body.password, 10),
+        password: req.body.password,
       };
 
       const cpfInDatabase = await User.findOne({ where: { cpf: newUser.cpf } });
       if (!cpfInDatabase) {
         // ADICIONANDO AO BANCO DE DADOS
         const user = await User.create(newUser);
-        user.password = "******"; //Ocultando a senha e a hash.
-        res.status(201).json(user);
+        //user.password = "******"; //Ocultando a senha e a hash.
+        const {password, ...rest} = user.toJSON()
+        res.status(201).json(rest);
       } else {
         res.status(400).json({ error: `this CPF already exists` });
       }
@@ -109,28 +111,35 @@ module.exports = {
   },
   login: async (req, res) => {
     try {
-        const userInDatabase = await User.findOne({
-            where: { cpf: req.body.cpf },
-        });
+      const userInDatabase = await User.findOne({
+        where: { cpf: req.body.cpf },
+      });
 
-        if (!userInDatabase)
-            return res.status(404).json({ message: "credenciais incorretas" });
+      if (!userInDatabase)
+        return res.status(404).json({ message: "credenciais incorretas" });
 
-        // compara senha informada com a senha criptografada no banco de dados
-        const passwordIsValid = await bcrypt.compare(
-            req.body.password,
-            userInDatabase.password
-        ); //return true or false
+      // compara senha informada com a senha criptografada no banco de dados
+      const passwordIsValid = await bcrypt.compare(
+        req.body.password,
+        userInDatabase.password
+      ); //return true or false
 
-        if (!passwordIsValid)
-            return res.status(404).json({ message: "credenciais incorretas" });
+      if (!passwordIsValid)
+        return res.status(404).json({ message: "credenciais incorretas" });
 
-        res.status(200).json({ message: "Login realizado com sucesso" });
+      const token = jwt.sign(
+        { id: userInDatabase.id },
+        process.env.TOKEN_PWD, //CHAVE
+        { expiresIn: "1h" } //1h = 1 hora | 1d = 1 dia
+      );
+
+      res.status(200).json({ name: userInDatabase.name, token: token });
+
     } catch (error) {
-        console.error(error.message);
-        res
-            .status(500)
-            .json({ message: "Não conseguimos processar a sua requisição." });
+      console.error(error.message);
+      res
+        .status(500)
+        .json({ message: "Não conseguimos processar a sua requisição." });
     }
   },
 };

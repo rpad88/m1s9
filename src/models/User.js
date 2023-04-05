@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const connection = require("../database");
+const bcrypt = require('bcrypt')
 
 const User = connection.define('user', {
     id: {
@@ -19,6 +20,13 @@ const User = connection.define('user', {
     password: {
         type: Sequelize.STRING,
         allowNull: false
+    }
+})
+
+User.beforeSave(async (user) => {
+    if(user.changed('password')) {
+        const hashedPassword = await bcrypt.hash(user.password, 10)
+        user.password = hashedPassword
     }
 })
 
