@@ -2,10 +2,12 @@ require('dotenv').config()
 const express = require('express')
 const rotas = require('./backend/routes')
 const connection = require('./src/database')
+const log = require('./src/middlewares/log')
 
 
 const app = express()
 app.use(express.json()) //Obrigatório
+app.use(log) //passa a utilizar o MIDDLEWARE global log
 
 const listaDeRotas = [
     '/',
