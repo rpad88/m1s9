@@ -4,10 +4,11 @@ const controller = require('../controller')
 
 // MIDDLEWARES
 const validateNewUser = require('../../src/middlewares/validate-new-user')
+const validateToken = require('../../src/middlewares/validate-token')
 
 // GET - lista
 router.get('/', controller.index)
-router.get('/tarefas', controller.listarTarefas)
+router.get('/tarefas',validateToken ,controller.listarTarefas)
 
 // POST - cadastra
 router.post('/tarefas', controller.addTasks)
