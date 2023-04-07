@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken')
-const log = require('./log')
 
 function validateToken(req, res, next) {
     console.info('validateToken() 👁‍🗨')

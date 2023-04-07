@@ -60,3 +60,25 @@ const validation = yup.object().shape({
       .required("a senha é obrigatória"),
 })
 ```
+
+### How to install used node packages
+
+```js 
+npm install express --save
+```
+```js
+npm install sequelize
+```
+```js
+//faz a conexão com o banco postgres
+npm install pg pg-hstore
+```
+```js
+npm install bcrypt
+```
+```js
+npm install yup
+```
+```js
+npm i jsonwebtoken
+```
