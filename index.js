@@ -10,7 +10,6 @@ app.use(express.json()) //Obrigatório
 app.use(log) //passa a utilizar o MIDDLEWARE global log
 
 const listaDeRotas = [
-    '/',
     '/tarefas',
     '/users',
     '/users/login'
